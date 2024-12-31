@@ -143,7 +143,7 @@
             <input type="text" id="textBox" placeholder="Craft ID">
             <button id="craftButton" onclick="findCraftID()">Find Craft</button>
             <ul id="craftNeed"></ul>
-            <button id="craftDoButton">Craft</button>
+            <button id="craftDoButton" onclick="craft()">Craft</button>
         </div>
     </div>
     
@@ -151,9 +151,9 @@
         // main variables
         let isMining = false; //for mine function
         let inventory = []; //main inventory
-        let itemsID = ["Stick", "Flint", "Small Stone", "Oak Log"] //ids of items
+        let itemsID = ["Stick", "Oak Log", "Flint"] //ids of items
         let allItemsID = ["Oak Planks"]
-        let craftID = { 1: {need: ["Oak Log", 4, "Stick", 2], output: ["Oak Planks", 1, "Stuff", 2]} }
+        let craftID = { 1: {need: ["Oak Log", 4, "Stick", 2], output: ["Oak Planks", 1, "Stuff", 2, "sigma", 2]} }
         let amountToGive = 1; //mine function to give
         let miningTime = 1000;
 
@@ -277,6 +277,104 @@
                 const li = document.createElement("li");
                 li.innerHTML = "Invalid Craft ID";
                 craftHTML.appendChild(li);
+            }
+        }
+
+        function craft() {
+            const inputValue = document.getElementById("textBox").value;
+            const recipe = craftID[inputValue];
+
+            if (!recipe) {
+                alert("Invalid Craft ID");
+                return;
+            }
+
+            const ingredients = recipe.need;
+            const outputItems = recipe.output;
+
+            // Проверяем, хватает ли ресурсов для крафта
+            for (let i = 0; i < ingredients.length; i += 2) {
+                const itemName = ingredients[i];
+                const neededAmount = ingredients[i + 1];
+                let totalAmount = 0;
+
+                // Считаем количество нужного ресурса в инвентаре
+                for (let j = 0; j < inventory.length; j++) {
+                    if (inventory[j] !== "Empty" && inventory[j].name === itemName) {
+                        totalAmount += inventory[j].amount;
+                    }
+                }
+
+                if (totalAmount < neededAmount) {
+                    alert("Not enough resources for crafting!");
+                    return;
+                }
+            }
+
+            // Удаляем ресурсы из инвентаря
+            for (let i = 0; i < ingredients.length; i += 2) {
+                const itemName = ingredients[i];
+                let neededAmount = ingredients[i + 1];
+
+                for (let j = 0; j < inventory.length; j++) {
+                    if (inventory[j] !== "Empty" && inventory[j].name === itemName) {
+                        const toRemove = Math.min(inventory[j].amount, neededAmount);
+                        inventory[j].amount -= toRemove;
+                        neededAmount -= toRemove;
+
+                        if (inventory[j].amount === 0) {
+                            inventory[j] = "Empty";
+                        }
+
+                        // Обновляем UI
+                        document.getElementById(j).innerHTML = inventory[j] === "Empty" ? "Empty" : `${inventory[j].name} ${inventory[j].amount}x`;
+
+                        if (neededAmount === 0) break;
+                    }
+                }
+            }
+
+            // Добавляем результаты в инвентарь
+            for (let i = 0; i < outputItems.length; i += 2) {
+                const itemName = outputItems[i];
+                let outputAmount = outputItems[i + 1];
+
+                // Сначала добавляем в существующие слоты с таким же предметом
+                for (let j = 0; j < inventory.length; j++) {
+                    if (inventory[j] !== "Empty" && inventory[j].name === itemName && inventory[j].amount < 64) {
+                        const spaceLeft = 64 - inventory[j].amount;
+                        const toAdd = Math.min(spaceLeft, outputAmount);
+
+                        inventory[j].amount += toAdd;
+                        outputAmount -= toAdd;
+
+                        document.getElementById(j).innerHTML = `${inventory[j].name} ${inventory[j].amount}x`;
+
+                        if (outputAmount === 0) break; // Закончили добавлять
+                    }
+                }
+
+                // Если ещё остались предметы, ищем пустые слоты
+                if (outputAmount > 0) {
+                    for (let j = 0; j < inventory.length; j++) {
+                        if (inventory[j] === "Empty") {
+                            const toAdd = Math.min(64, outputAmount);
+
+                            inventory[j] = { name: itemName, amount: toAdd };
+                            outputAmount -= toAdd;
+
+                            document.getElementById(j).innerHTML = `${inventory[j].name} ${inventory[j].amount}x`;
+
+                            if (outputAmount === 0) break; // Закончили добавлять
+                        }
+                    }
+                }
+
+                // Если даже после этого остались предметы, инвентарь переполнен
+                if (outputAmount > 0) {
+                    alert("Not enough space in inventory!");
+                    return; // Прерываем
+                }
             }
         }
 
