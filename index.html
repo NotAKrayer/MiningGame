@@ -12,16 +12,29 @@
             font-size: x-large;
         }
 
+        #craft {
+            background-color: #4d999f;
+            width: 500px;
+            height: 360px;
+            border: 2px solid black;
+            position: relative;
+            left: 515.4px;
+            bottom: 530px;
+            font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+            font-size: large;
+            text-align: center;
+        }
+
         #inventory {
             width: 1000px;
             height: 300px;
             overflow-y: scroll;
-            border: 2px solid black;
+            border: 1px solid black;
             justify-content: center;
             align-items: center;
-            position: absolute;
+            position: relative;
             left: 515px;
-            bottom: 642px;
+            bottom: 542px;
         }
     
         #inventory ul {
@@ -48,9 +61,8 @@
         }
 
         body {
-            height: 100vh;
             overflow-y: hidden;
-            background: linear-gradient(to bottom right, blue, pink);
+            background: rgb(149, 104, 239);
         }
 
         #progressContainer {
@@ -82,13 +94,17 @@
     <div id="inventory">
         <ul id="list"></ul>
     </div>
+
+    <div id="craft">
+        <h3>Craft</h3>
+    </div>
     
     <script>
         // main variables
         let isMining = false; //for mine function
         let inventory = []; //main inventory
-        let itemsID = ["Stick", "Flint", "Stone"] //ids of items
-        let amountToGive = 500; //mine function to give
+        let itemsID = ["Stick", "Flint", "Small Stone"] //ids of items
+        let amountToGive = 1; //mine function to give
         let miningTime = 1000;
 
         window.onload = function() {
@@ -111,7 +127,7 @@
                 isMining = false;
 
                 let newItem = getItemSearch();
-                let remaining = amountToGive;
+                let remaining = Math.floor(Math.random() * 2) + amountToGive;
 
                 // Проходим по инвентарю, чтобы распределить предметы
                 for (let i = 0; i < inventory.length; i++) {
@@ -138,11 +154,6 @@
                         // Обновляем UI
                         document.getElementById(i).innerHTML = inventory[i].name + " " + inventory[i].amount + "x";
                     }
-                }
-
-                // Если предметы не помещаются
-                if (remaining > 0) {
-                    console.log("Inventory full!" + remaining + "x" + " " + newItem + "vanished into the void");
                 }
             }, miningTime);
         }
