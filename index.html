@@ -98,9 +98,9 @@
                         cube.position.set(col, layer, row);
                         //cube.castShadow = true;
                         //cube.receiveShadow = true; teni
-                        //const edges = new THREE.EdgesGeometry(geometry);
-                        //const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000 }));
-                        cube.add(line);
+                        const edges = new THREE.EdgesGeometry(geometry);
+                        const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000 }));
+                        //cube.add(line);
                         scene.add(cube);
                     }
                 }
