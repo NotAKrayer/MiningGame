@@ -57,8 +57,8 @@
         controls.target.set(1, 1, 1);
         
         const textureLoader = new THREE.TextureLoader();
-        const urlBlock1 = './machine_coil_cupronickel.png'; 
-        const urlBlock2 = './machine_casing_frost_proof.png';
+        const urlBlock2 = './machine_coil_cupronickel.png'; 
+        const urlBlock1 = './machine_casing_frost_proof.png';
 
         const matA = new THREE.MeshStandardMaterial({ 
             map: textureLoader.load(urlBlock1) 
@@ -98,8 +98,8 @@
                         cube.position.set(col, layer, row);
                         //cube.castShadow = true;
                         //cube.receiveShadow = true; teni
-                        const edges = new THREE.EdgesGeometry(geometry);
-                        const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000 }));
+                        //const edges = new THREE.EdgesGeometry(geometry);
+                        //const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000 }));
                         cube.add(line);
                         scene.add(cube);
                     }
